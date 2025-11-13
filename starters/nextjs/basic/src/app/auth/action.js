@@ -11,7 +11,7 @@ import { getAuth, confirmPasswordReset, applyActionCode } from 'firebase/auth';
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyD1u3m5OblQZ5MVAAl6gGa5p_zV18q7H1I",
-  authDomain: "api-418916.firebaseapp.com",
+  authDomain: "icetech.my",
   projectId: "youtube-api-418916",
   storageBucket: "youtube-api-418916.firebasestorage.app",
   messagingSenderId: "48309806360",
