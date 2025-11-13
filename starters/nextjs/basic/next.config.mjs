@@ -4,7 +4,7 @@ const nextConfig = {
     return [
       {
         source: '/auth/:path*',
-        destination: '/src/app/auth/:path*', // ensure it gets served/handled
+        destination: '/auth/:path*', // ensure it gets served/handled
       },
     ];
   },
