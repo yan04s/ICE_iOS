@@ -1,9 +1,11 @@
-// /pages/auth/action.js
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import { initializeApp } from 'firebase/app';
-import { getAuth, confirmPasswordReset, applyActionCode } from 'firebase/auth';
 
+
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { initializeApp } from 'firebase/app';
+import { getAuth, applyActionCode, confirmPasswordReset } from 'firebase/auth';
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -18,32 +20,31 @@ const firebaseConfig = {
   appId: "1:48309806360:web:48f79e2016f17443a8ea6d"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 export default function ActionPage() {
-  const router = useRouter();
-  const { mode, oobCode, apiKey, lang } = router.query;
-  const [message, setMessage] = useState('Loading…');
-  const [newPassword, setNewPassword] = useState('');
-  const [showResetForm, setShowResetForm] = useState(false);
+  const searchParams = useSearchParams();
+  const mode = searchParams.get('mode');
+  const oobCode = searchParams.get('oobCode');
+  const [message, setMessage] = useState<string>('Loading…');
+  const [newPassword, setNewPassword] = useState<string>('');
+  const [showResetForm, setShowResetForm] = useState<boolean>(false);
 
   useEffect(() => {
+    // ensure oobCode is valid string
     if (!mode || !oobCode) {
       setMessage('Invalid action link.');
       return;
     }
 
     if (mode === 'resetPassword') {
-      // show the form to input new password
       setShowResetForm(true);
       setMessage('');
     } else if (mode === 'verifyEmail') {
-      // handle email verification if you want
       applyActionCode(auth, oobCode)
         .then(() => {
-          setMessage('Your email has been verified. You may now sign in.');
+          setMessage('Email verified — you may now sign in.');
         })
         .catch((error) => {
           setMessage(`Error verifying email: ${error.message}`);
@@ -51,19 +52,26 @@ export default function ActionPage() {
     } else {
       setMessage('Unsupported action.');
     }
-  }, [mode, oobCode, auth]);
+  }, [mode, oobCode]);  
 
-  const handleReset = async (e) => {
+  const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (newPassword.length < 6) {
       alert('Password must be at least 6 characters');
       return;
     }
+
+    if (!oobCode) {
+      setMessage('Missing action code for reset.');
+      return;
+    }
+
     try {
       await confirmPasswordReset(auth, oobCode, newPassword);
-      setMessage('Password has been reset. You may now sign in.');
+      setMessage('Password has been reset — you may now sign in.');
       setShowResetForm(false);
-    } catch (error) {
+    } catch (error: any) {
       setMessage(`Error resetting password: ${error.message}`);
     }
   };
@@ -75,7 +83,7 @@ export default function ActionPage() {
       {showResetForm && (
         <form onSubmit={handleReset}>
           <div>
-            <label>New Password:</label>
+            <label>New Password:</label><br/>
             <input
               type="password"
               value={newPassword}
