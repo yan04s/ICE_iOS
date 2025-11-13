@@ -5,8 +5,8 @@ module.exports = {
   async rewrites() {
     return [
       {
-        source: '/__/auth/:path*',
-        destination: '/__/auth/:path*', // ensure it gets served/handled
+        source: '/auth/:path*',
+        destination: '/auth/:path*', // ensure it gets served/handled
       },
     ];
   },
