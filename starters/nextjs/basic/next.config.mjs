@@ -3,8 +3,8 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/auth/:path*',
-        destination: '/auth/:path*', // ensure it gets served/handled
+        source: '/__/auth/:path*',
+        destination: '/__/auth/:path*', // ensure it gets served/handled
       },
     ];
   },
